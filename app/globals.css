@@ -3,24 +3,38 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --beige-background: #f0ebe3;
+  --beige-text: #7e6e5c;
+  --beige-text-accent: #cdbba5;
+  --beige-background-accent: #cdbba5;
+  --character-blue: #5e6676;
+  --adventure-green: #a7b982;
 }
 
-@theme inline {
+@font-face {
+  font-family: "genshin";
+  src: url("/fonts/genshin.ttf");
+}
+
+@utility font-genshin {
+  font-family: "genshin";
+}
+
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-beige-background: var(--beige-background);
+  --color-beige-background-accent: var(--beige-background-accent);
+  --color-adventure-green: var(--adventure-green);
+  --color-beige-text: var(--beige-text);
+  --color-beige-text-accent: var(--beige-text);
+  --color-character-blue: var(--character-blue);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: genshin;
 }

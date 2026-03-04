@@ -1,4 +1,5 @@
 import CharacterCard from "@/components/CharacterCard";
+import ProfileBanner from "@/components/ProfileBanner";
 import {
   EnkaClient,
   CharacterData,
@@ -36,24 +37,39 @@ export default async function UIDPage({ params }: PageProps) {
   try {
     user = await enka.fetchUser(Number(uid));
   } catch (err) {
-    console.error("Failed to fetch user:", err);
+    await enka.cachedAssetsManager.fetchAllContents(); // try redownloading assets
+    await enka.cachedAssetsManager.refreshAllData(); // load into memory
+
+    try {
+      user = await enka.fetchUser(Number(uid));
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
     return (
       <main className="p-10">
         <h1 className="text-2xl font-bold">UID: {uid}</h1>
         <p className="text-red-500">Failed to fetch player data</p>
       </main>
     );
+    }
   }
-
-  console.log(user);
 
   const characters = user.characters ?? [];
 
+  console.log(user);
+
   return (
-    <main className="py-10 px-4 flex flex-col items-center justify-center">
-      <section className="max-w-3xl w-full">
-        <h1 className="text-2xl mb-6">UID: {uid}</h1>
-        <div className="grid grid-cols-4 lg:grid-cols-6 gap-4">
+    <main className="flex flex-col items-center justify-center sm:py-10 sm:px-4 w-full min-h-screen bg-blue-950">
+      <section className="max-w-3xl w-full bg-beige-background flex flex-col gap-8 sm:rounded-xl overflow-hidden pb-4 text-beige-text">
+        <ProfileBanner 
+          profileBannerID={user.profileCard.pictures[1].name || ""} 
+          profileImgUrl={user.profilePicture?.icon.url || ''}
+          playerName={user.nickname || 'Traveler'}
+          playerUID={uid}
+          playerSignature={user.signature || 'signature'}
+          playerAdventureRank={user.level || 0}
+          playerWorldLevel={user.worldLevel || 0}
+        />
+        <div className="grid grid-cols-4 sm:grid-cols-6 gap-4 px-4">
           {characters.map((char: any, i) => {
             //console.log(char);
 

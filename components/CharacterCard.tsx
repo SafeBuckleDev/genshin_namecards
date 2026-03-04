@@ -8,7 +8,13 @@ export interface CardProps {
 }
 
 export default function CharacterCard({ props }: CardProps) {
-  const formattedName = props.fullName.replace(/([a-z])([A-Z])/g, "$1 $2");
+  const formattedName = props.fullName
+  .replace(/([a-z])([A-Z])/g, "$1 $2");
+
+  const displayName =
+    formattedName.length > 8
+      ? formattedName.slice(0, 8) + "..."
+      : formattedName;
 
   const bgColor =
     props.rarity === 5
@@ -28,7 +34,7 @@ export default function CharacterCard({ props }: CardProps) {
             src={`https://gi.yatta.moe/assets/UI/UI_AvatarIcon_${props.charName}.png?vh=2024123000`}
           />
 
-          <div className="absolute top-1 left-1 h-8 aspect-square z-10">
+          <div className="absolute top-1 left-1 h-6 xs:h-8 aspect-square z-10">
             <img
               className="w-full h-full"
               src={`https://gi.yatta.moe/assets/UI/UI_Buff_Element_${props.element}.png`}
@@ -36,8 +42,8 @@ export default function CharacterCard({ props }: CardProps) {
             />
           </div>
         </div>
-        <div className="flex flex-col h-9 justify-around py-1 text-center text-xs font-bold">
-          <p>{formattedName}</p>
+        <div className="flex flex-col h-9 justify-around py-1 text-center text-character-blue xs:text-md text-xs">
+          <p>{displayName}</p>
         </div>
       </div>
     </div>
