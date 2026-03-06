@@ -1,4 +1,5 @@
 import CharacterCard from "@/components/CharacterCard";
+import CharactersOverview from "@/components/CharactersOverview";
 import CharacterStats from "@/components/CharacterStats";
 import ProfileBanner from "@/components/ProfileBanner";
 import {
@@ -58,8 +59,6 @@ export default async function UIDPage({ params }: PageProps) {
     }
   }
 
-  const characters = user.characters ?? [];
-
   console.log(user);
 
   return (
@@ -74,23 +73,16 @@ export default async function UIDPage({ params }: PageProps) {
           playerAdventureRank={user.level || 0}
           playerWorldLevel={user.worldLevel || 0}
         />
-        <div className="grid grid-cols-4 sm:grid-cols-6 gap-4 px-4">
-          {characters.map((char: any, i) => {
-            //console.log(char);
 
-            return (
-              <CharacterCard
-                key={i}
-                props={{
-                  fullName: char.weapon.location,
-                  charName: char.characterData.details._nameId,
-                  rarity: char.characterData.stars,
-                  element: char.characterData.element.id,
-                }}
-              />
-            );
-          })}
-        </div>
+        <CharactersOverview
+          characters={user.characters.map((char: any) => ({
+            fullName: char.weapon.location,
+            charName: char.characterData.details._nameId,
+            rarity: char.characterData.stars,
+            element: char.characterData.element.id,
+          }))}
+        />
+
         <CharacterStats
           achievements={user.achievements}
           friendships={user.maxFriendshipCount}
