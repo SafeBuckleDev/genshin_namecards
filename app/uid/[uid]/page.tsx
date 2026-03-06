@@ -1,4 +1,5 @@
 import CharacterCard from "@/components/CharacterCard";
+import CharacterStats from "@/components/CharacterStats";
 import ProfileBanner from "@/components/ProfileBanner";
 import {
   EnkaClient,
@@ -19,7 +20,11 @@ export default async function UIDPage({ params }: PageProps) {
 
   // 1️⃣ Set cache directory
   const cachePath = path.join(process.cwd(), "enka-cache");
-  const enka = new EnkaClient({ cacheDirectory: cachePath });
+  const enka = new EnkaClient({
+    cacheDirectory: cachePath,
+    timeout: 10000, // 10 seconds instead of 3
+    defaultLanguage: "en",
+  });
 
   // 2️⃣ Ensure cache directory exists
   enka.cachedAssetsManager.cacheDirectorySetup();
@@ -44,12 +49,12 @@ export default async function UIDPage({ params }: PageProps) {
       user = await enka.fetchUser(Number(uid));
     } catch (err) {
       console.error("Failed to fetch user:", err);
-    return (
-      <main className="p-10">
-        <h1 className="text-2xl font-bold">UID: {uid}</h1>
-        <p className="text-red-500">Failed to fetch player data</p>
-      </main>
-    );
+      return (
+        <main className="p-10">
+          <h1 className="text-2xl font-bold">UID: {uid}</h1>
+          <p className="text-red-500">Failed to fetch player data</p>
+        </main>
+      );
     }
   }
 
@@ -60,12 +65,12 @@ export default async function UIDPage({ params }: PageProps) {
   return (
     <main className="flex flex-col items-center justify-center sm:py-10 sm:px-4 w-full min-h-screen bg-blue-950">
       <section className="max-w-3xl w-full bg-beige-background flex flex-col gap-8 sm:rounded-xl overflow-hidden pb-4 text-beige-text">
-        <ProfileBanner 
-          profileBannerID={user.profileCard.pictures[1].name || ""} 
-          profileImgUrl={user.profilePicture?.icon.url || ''}
-          playerName={user.nickname || 'Traveler'}
+        <ProfileBanner
+          profileBannerID={user.profileCard.pictures[1].name || ""}
+          profileImgUrl={user.profilePicture?.icon.url || ""}
+          playerName={user.nickname || "Traveler"}
           playerUID={uid}
-          playerSignature={user.signature || 'signature'}
+          playerSignature={user.signature || "no signature"}
           playerAdventureRank={user.level || 0}
           playerWorldLevel={user.worldLevel || 0}
         />
@@ -86,6 +91,23 @@ export default async function UIDPage({ params }: PageProps) {
             );
           })}
         </div>
+        <CharacterStats
+          achievements={user.achievements}
+          friendships={user.maxFriendshipCount}
+          spiralAbyss={{
+            floor: user.spiralAbyss?.floor || 0,
+            chamber: user.spiralAbyss?.chamber || 0,
+            stars: user.spiralAbyss?.stars || 0,
+          }}
+          theather={{
+            act: user.theater?.act || 0,
+            stars: user.theater?.stars || 0,
+          }}
+          stygian={{
+            difficulty: user.stygian?.difficulty || 1,
+            clearTime: user.stygian?.clearTime || 0,
+          }}
+        />
       </section>
     </main>
   );
