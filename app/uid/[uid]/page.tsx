@@ -18,44 +18,13 @@ const enka = new EnkaClient({
   defaultLanguage: "en",
 });
 
-// Ensure cache exists
-enka.cachedAssetsManager.cacheDirectorySetup();
-
-let assetsLoaded = false;
-
-async function ensureAssetsLoaded() {
-  if (assetsLoaded) return;
-
-  try {
-    await enka.cachedAssetsManager.refreshAllData();
-  } catch {
-    await enka.cachedAssetsManager.fetchAllContents();
-    await enka.cachedAssetsManager.refreshAllData();
-  }
-
-  assetsLoaded = true;
-}
-
-async function fetchUserWithRetry(uid: number, retries = 3) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await enka.fetchUser(uid);
-    } catch (err) {
-      if (i === retries - 1) throw err;
-      await new Promise((r) => setTimeout(r, 1000));
-    }
-  }
-}
-
 export default async function UIDPage({ params }: PageProps) {
   const { uid } = await params;
-
-  await ensureAssetsLoaded();
 
   let user;
 
   try {
-    user = await fetchUserWithRetry(Number(uid));
+    user = await enka.fetchUser(Number(uid));
   } catch (err) {
     console.error("Failed to fetch user:", err);
 
@@ -67,9 +36,105 @@ export default async function UIDPage({ params }: PageProps) {
     );
   }
 
+  console.log(user?.characters[0].stats.attack);
+
+  const characters = user.characters.map((char) => {
+    const charName = char.characterData.icon.name.replace("UI_AvatarIcon_", "");
+
+    return {
+      id: Number(char.characterData.id),
+      fullName: String(char.characterData.name.get("en") ?? ""),
+      charName,
+      rarity: Number(char.characterData.stars ?? 0),
+      element: String(char.characterData?.element?.id ?? ""),
+
+      level: Number(char.level ?? 0),
+      friendship: Number(char.friendship ?? 0),
+      constellation: Number(char.unlockedConstellations?.length ?? 0),
+
+      splashArt: `https://gi.yatta.moe/assets/UI/UI_Gacha_AvatarImg_${charName}.png`,
+
+      characterStats: {
+        health: {
+          fightProp: String(char.stats.maxHealth.fightProp ?? ""),
+          isPercent: Boolean(char.stats.maxHealth.isPercent ?? false),
+          value: Number(char.stats.maxHealth.value ?? 0),
+        },
+        attack: {
+          fightProp: String(char.stats.attack.fightProp ?? ""),
+          isPercent: Boolean(char.stats.attack.isPercent ?? false),
+          value: Number(char.stats.attack.value ?? 0),
+        },
+        defense: {
+          fightProp: String(char.stats.defense.fightProp ?? ""),
+          isPercent: Boolean(char.stats.defense.isPercent ?? false),
+          value: Number(char.stats.defense.value ?? 0),
+        },
+        elementMastery: {
+          fightProp: String(char.stats.elementMastery.fightProp ?? ""),
+          isPercent: Boolean(char.stats.elementMastery.isPercent ?? false),
+          value: Number(char.stats.elementMastery.value ?? 0),
+        },
+        critRate: {
+          fightProp: String(char.stats.critRate.fightProp ?? ""),
+          isPercent: Boolean(char.stats.critRate.isPercent ?? false),
+          value: Number(char.stats.critRate.value ?? 0),
+        },
+        critDamage: {
+          fightProp: String(char.stats.critDamage.fightProp ?? ""),
+          isPercent: Boolean(char.stats.critDamage.isPercent ?? false),
+          value: Number(char.stats.critDamage.value ?? 0),
+        },
+        energyRecharge: {
+          fightProp: String(char.stats.chargeEfficiency.fightProp ?? ""),
+          isPercent: Boolean(char.stats.chargeEfficiency.isPercent ?? false),
+          value: Number(char.stats.chargeEfficiency.value ?? 0),
+        },
+      },
+
+      artifacts: (char.artifacts ?? []).map((artifact) => ({
+        name: String(artifact.artifactData?.name?.get("en") ?? ""),
+        setName: String(artifact.artifactData?.set?.name?.get("en") ?? ""),
+        rarity: Number(artifact.artifactData?.stars ?? 0),
+        level: Number(artifact.level ?? 0),
+        icon: String(artifact.artifactData?.icon?.url ?? ""),
+
+        mainStat: {
+          name: String(artifact.mainstat?.fightPropName ?? ""),
+          value: Number(artifact.mainstat?.value ?? 0),
+        },
+
+        subStats: Object.entries(artifact.substats ?? {}).map(
+          ([name, value]) => ({
+            name: String(name),
+            value: Number(value),
+          }),
+        ),
+      })),
+
+      weapon: char.weapon
+        ? {
+            name: String(char.weapon.weaponData?.name?.get("en") ?? ""),
+            level: Number(char.weapon.level ?? 0),
+            maxLevel: Number(char.weapon.maxLevel ?? 0),
+            refinement: Number(char.weapon.refinementRank ?? 1),
+            rarity: Number(char.weapon.weaponData?.stars ?? 0),
+            icon: String(char.weapon.weaponData?.icon?.url ?? ""),
+            weaponStats: Object.entries(char.weapon.weaponStats ?? {}).map(
+              ([i]) => ({
+                fightProp: char.weapon.weaponStats?.[i]?.fightProp,
+                isPercent: char.weapon.weaponStats?.[i]?.isPercent,
+                value: char.weapon.weaponStats?.[i]?.value,
+              }),
+            ),
+          }
+        : null,
+    };
+  });
+
   return (
-    <main className="flex flex-col items-center justify-center sm:py-10 sm:px-4 w-full min-h-screen bg-blue-950">
-      <section className="max-w-3xl w-full bg-beige-background flex flex-col gap-8 sm:rounded-xl overflow-hidden pb-4 text-beige-text">
+    <main className="flex flex-col items-center justify-center w-full min-h-screen bg-blue-950">
+      <section className="max-w-5xl w-full bg-beige-background flex flex-col gap-8 overflow-hidden pb-4 text-beige-text shadow-none sm:shadow-2xl">
         <ProfileBanner
           profileBannerID={user.profileCard?.pictures?.[1]?.name || ""}
           profileImgUrl={user.profilePicture?.icon?.url || ""}
@@ -80,14 +145,7 @@ export default async function UIDPage({ params }: PageProps) {
           playerWorldLevel={user.worldLevel || 0}
         />
 
-        <CharactersOverview
-          characters={(user.characters ?? []).map((char: any) => ({
-            fullName: char.weapon?.location || "",
-            charName: char.characterData?.details?._nameId || "",
-            rarity: char.characterData?.stars || 0,
-            element: char.characterData?.element?.id || "",
-          }))}
-        />
+        <CharactersOverview characters={characters} />
 
         <CharacterStats
           achievements={user.achievements || 0}
