@@ -1,5 +1,7 @@
 "use client";
 
+import { AnimatePresence } from "framer-motion";
+
 import { useState } from "react";
 import CharacterCard from "./CharacterCard";
 import CharacterModal from "./CharacterModal";
@@ -119,12 +121,15 @@ export default function CharactersOverview({
         ))}
       </section>
 
-      {selectedCharacter && (
-        <CharacterModal
-          character={selectedCharacter}
-          onClose={() => setSelectedCharacter(null)}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {selectedCharacter && (
+          <CharacterModal
+            key={selectedCharacter.id}
+            character={selectedCharacter}
+            onClose={() => setSelectedCharacter(null)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import type { CharacterData } from "./CharactersOverview";
 
 interface CharacterModalProps {
@@ -85,13 +86,24 @@ export default function CharacterModal({
   console.log(character);
 
   return (
-    <div
+    <motion.div
       className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"
       onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
     >
-      <div
+      <motion.div
         className="relative w-full max-w-6xl grid grid-cols-3 gap-8 aspect-[16/7] overflow-hidden rounded-lg bg-[#e9e5dc] p-6"
         onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, scale: 0.85, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 16 }}
+        transition={{
+          duration: 0.22,
+          ease: "easeOut",
+        }}
       >
         {/* element background */}
         <img
@@ -100,10 +112,35 @@ export default function CharacterModal({
         />
 
         {/* Splash Art */}
-        <img
+        <motion.img
           className="h-full scale-130 absolute top-[0%] left-[-27%] z-10"
           src={character.splashArt}
           alt={character.fullName}
+          initial={{
+            opacity: 0,
+            x: -50,
+            scale: 1.05,
+          }}
+          animate={{
+            opacity: 1,
+            x: 0,
+            scale: 1,
+          }}
+          exit={{
+            opacity: 0,
+            x: -50,
+            scale: 1.03,
+          }}
+          transition={{
+            duration: 0.6,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          style={{
+            maskImage:
+              "linear-gradient(to right, transparent 0%, black 20%, black 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent 0%, black 20%, black 100%)",
+          }}
         />
 
         <div className="col-start-2 w-full h-full z-20 flex flex-col gap-18 ">
@@ -216,7 +253,7 @@ export default function CharacterModal({
             </div>
           ))}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
