@@ -114,7 +114,10 @@ export default function CharacterModal({
         {/* Splash Art */}
         <motion.img
           className="h-full scale-130 absolute top-[0%] left-[-27%] z-10"
-          src={character.splashArt}
+          src={character.splashArt.replace(
+            "https://homdgcat.wiki/homdgcat-res/Gacha/UI_Gacha_AvatarImg_",
+            "https://gi.yatta.moe/assets/UI/UI_Gacha_AvatarImg_",
+          )}
           alt={character.fullName}
           initial={{
             opacity: 0,
@@ -210,14 +213,14 @@ export default function CharacterModal({
           </div>
 
           {/* CharacterStats */}
-          <div className="w-full h-full  flex flex-col gap-4">
+          <div className="w-full h-full  flex flex-col gap-2">
             {characterStatKeys.map((key) => {
               const stat = character.characterStats[key];
 
               return (
                 <div
                   key={key}
-                  className="w-full flex flex-row justify-between text-white"
+                  className="w-full flex flex-row justify-between text-white bg-gradient-to-t transition hover:from-black/20 pl-1 pr-2 py-1 hover:to-black/40 rounded-sm"
                 >
                   <div className="flex flex-row gap-2">
                     <img

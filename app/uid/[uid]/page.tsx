@@ -36,10 +36,10 @@ export default async function UIDPage({ params }: PageProps) {
     );
   }
 
-  console.log(user?.characters[0].stats.attack);
+  console.log(user?.characters[9]);
 
   const characters = user.characters.map((char) => {
-    const charName = char.characterData.icon.name.replace("UI_AvatarIcon_", "");
+    const charName = char.costume.icon.name.replace("UI_AvatarIcon_", "");
 
     return {
       id: Number(char.characterData.id),
@@ -52,7 +52,7 @@ export default async function UIDPage({ params }: PageProps) {
       friendship: Number(char.friendship ?? 0),
       constellation: Number(char.unlockedConstellations?.length ?? 0),
 
-      splashArt: `https://gi.yatta.moe/assets/UI/UI_Gacha_AvatarImg_${charName}.png`,
+      splashArt: char.costume.splashImage.url,
 
       characterStats: {
         health: {
