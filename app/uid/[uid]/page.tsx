@@ -1,7 +1,7 @@
 import CharactersOverview from "@/components/CharactersOverview";
 import CharacterStats from "@/components/CharacterStats";
 import ProfileBanner from "@/components/ProfileBanner";
-import { EnkaClient } from "enka-network-api";
+import { EnkaClient, fightProps } from "enka-network-api";
 import path from "path";
 
 export const dynamic = "force-dynamic";
@@ -35,8 +35,6 @@ export default async function UIDPage({ params }: PageProps) {
       </main>
     );
   }
-
-  console.log(user?.characters[9]);
 
   const characters = user.characters.map((char) => {
     const charName = char.costume.icon.name.replace("UI_AvatarIcon_", "");
@@ -102,14 +100,14 @@ export default async function UIDPage({ params }: PageProps) {
         mainStat: {
           name: String(artifact.mainstat?.fightPropName ?? ""),
           value: Number(artifact.mainstat?.value ?? 0),
+          isPercent: Boolean(artifact.mainstat.isPercent ?? false),
         },
 
-        subStats: Object.entries(artifact.substats ?? {}).map(
-          ([name, value]) => ({
-            name: String(name),
-            value: Number(value),
-          }),
-        ),
+        subStats: (artifact.substats.total ?? []).map((stat) => ({ 
+          fightProp: String(stat.fightProp ?? ""),
+          value: Number(stat.value ?? 0),
+          isPercent: Boolean(stat.isPercent ?? false),
+        })),
       })),
 
       weapon: char.weapon

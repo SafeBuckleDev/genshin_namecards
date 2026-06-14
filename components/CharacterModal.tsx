@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import ArtifactModal from "./ArtifactModal";
+
 import { motion } from "framer-motion";
 import type { CharacterData } from "./CharactersOverview";
 
@@ -18,7 +21,7 @@ const characterStatKeys = [
   "energyRecharge",
 ] as const;
 
-const formatStatValue = (value: number, isPercent: boolean) => {
+export const formatStatValue = (value: number, isPercent: boolean) => {
   if (isPercent) {
     return `${(value * 100).toFixed(1).replace(".", ",")}%`;
   }
@@ -26,17 +29,24 @@ const formatStatValue = (value: number, isPercent: boolean) => {
   return Math.round(value).toString();
 };
 
-const formatFightPropToName = (fightProp: string) => {
+export const formatFightPropToName = (fightProp: string) => {
   if (
     fightProp == "FIGHT_PROP_CUR_ATTACK" ||
-    fightProp == "FIGHT_PROP_BASE_ATTACK"
+    fightProp == "FIGHT_PROP_BASE_ATTACK" ||
+    fightProp == "FIGHT_PROP_ATTACK"
   ) {
     // flat attack or max attack
 
     return "ATK";
   }
 
-  if (fightProp == "FIGHT_PROP_MAX_HP") {
+  if (fightProp == "FIGHT_PROP_ATTACK_PERCENT") {
+    // ATK%
+
+    return "ATK percent";
+  }
+
+  if (fightProp == "FIGHT_PROP_MAX_HP" || fightProp == "FIGHT_PROP_HP") {
     // flat health or max health
 
     return "HP";
@@ -48,10 +58,16 @@ const formatFightPropToName = (fightProp: string) => {
     return "HP percent";
   }
 
-  if (fightProp == "FIGHT_PROP_CUR_DEFENSE") {
+  if (fightProp == "FIGHT_PROP_CUR_DEFENSE" || fightProp == "FIGHT_PROP_DEFENSE") {
     // flat defense or max defense
 
     return "DEF";
+  }
+
+  if (fightProp == "FIGHT_PROP_DEFENSE_PERCENT") {
+    // Defense%
+
+    return "DEF percent"
   }
 
   if (fightProp == "FIGHT_PROP_CRITICAL") {
@@ -84,6 +100,15 @@ export default function CharacterModal({
   onClose,
 }: CharacterModalProps) {
   console.log(character);
+
+  const [hoveredArtifact, setHoveredArtifact] = useState<
+    CharacterData["artifacts"][number] | null
+  >(null);
+
+  const [mousePosition, setMousePosition] = useState({
+    x: 0,
+    y: 0,
+  });
 
   return (
     <motion.div
@@ -220,7 +245,7 @@ export default function CharacterModal({
               return (
                 <div
                   key={key}
-                  className="w-full flex flex-row justify-between text-white bg-gradient-to-t transition hover:from-black/20 pl-1 pr-2 py-1 hover:to-black/40 rounded-sm"
+                  className="w-full flex flex-row justify-between text-white transition hover:bg-black/40 pl-1 pr-2 py-1 rounded-sm"
                 >
                   <div className="flex flex-row gap-2">
                     <img
@@ -239,6 +264,14 @@ export default function CharacterModal({
         <div className="col-start-3 w-full h-full z-20 grid grid-rows-5 gap-4">
           {character.artifacts.map((artifact, i) => (
             <div
+              onMouseEnter={() => setHoveredArtifact(artifact)}
+              onMouseLeave={() => setHoveredArtifact(null)}
+              onMouseMove={(e) =>
+                setMousePosition({
+                  x: e.clientX,
+                  y: e.clientY,
+                })
+              }
               key={i}
               className="flex flex-row gap-4 items-center h-20 overflow-hidden bg-gradient-to-t from-black/5 to-black/40 rounded-md"
             >
@@ -256,6 +289,14 @@ export default function CharacterModal({
             </div>
           ))}
         </div>
+
+        {hoveredArtifact && (
+          <ArtifactModal
+            artifact={hoveredArtifact}
+            mouseX={mousePosition.x}
+            mouseY={mousePosition.y}
+          />
+        )}
       </motion.div>
     </motion.div>
   );

@@ -80,10 +80,12 @@ export interface CharacterData {
     mainStat: {
       name: string;
       value: number;
+      isPercent: boolean;
     };
     subStats: {
-      name: string;
+      fightProp: string;
       value: number;
+      isPercent: boolean;
     }[];
   }[];
 }
