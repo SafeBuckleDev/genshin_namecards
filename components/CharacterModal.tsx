@@ -123,7 +123,7 @@ export default function CharacterModal({
       transition={{ duration: 0.2 }}
     >
       <motion.div
-        className="relative w-full max-w-6xl grid grid-cols-3 gap-8 aspect-[16/7] overflow-hidden rounded-lg bg-[#e9e5dc] p-6"
+        className="relative w-full lg:max-w-6xl grid grid-cols-3 gap-8 aspect-[16/7] overflow-hidden rounded-lg bg-[#e9e5dc] p-6"
         onClick={(e) => e.stopPropagation()}
         initial={{ opacity: 0, scale: 0.85, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -174,7 +174,7 @@ export default function CharacterModal({
           }}
         />
 
-        <div className="col-start-1 w-full h-full z-20 flex flex-col gap-12">
+        <div className="col-start-1 w-full h-full z-20 flex flex-col justify-between">
           {/* Character base info */}
           <div className="flex flex-col gap-1 text-white">
             <h1 className="text-2xl">{character.fullName}</h1>
@@ -191,7 +191,7 @@ export default function CharacterModal({
           </div>
 
           {/* Character level/constelations */}
-          <div className="w-full h-full flex flex-row justify-between pb-12 text-white">
+          <div className="w-full flex flex-row justify-between text-white">
             <div className="w-8  h-full flex flex-col justify-end gap-3">
               {character.constellations.map((constelation, i) => (
                 <div
@@ -212,7 +212,7 @@ export default function CharacterModal({
               ))}
             </div>
 
-            <div className="w-9.5  h-full flex flex-col justify-end gap-6">
+            <div className="w-9.5  h-full flex flex-col justify-end gap-6 pb-2">
               {character.talents.map((talent, i) => (
                 <div
                   key={i}
@@ -252,7 +252,7 @@ export default function CharacterModal({
           </div>
         </div>
 
-        <div className="col-start-2 w-full h-full z-20 flex flex-col gap-18 ">
+        <div className="col-start-2 w-full h-full z-20 flex flex-col justify-between ">
           {/* CharacterWeapon */}
           <div className="h-20 w-full  rounded-md flex flex-row gap-4">
             <div className="h-full aspect-square flex flex-col -translate-y-2">
@@ -319,7 +319,7 @@ export default function CharacterModal({
           </div>
 
           {/* CharacterStats */}
-          <div className="w-full h-full  flex flex-col gap-2">
+          <div className="w-full flex flex-col gap-2">
             {characterStatKeys.map((key) => {
               const stat = character.characterStats[key];
 
@@ -354,19 +354,35 @@ export default function CharacterModal({
                 })
               }
               key={i}
-              className="flex flex-row gap-4 items-center h-20 overflow-hidden bg-gradient-to-t from-black/5 to-black/40 rounded-md"
+              className="min-h-0 bg-gradient-to-t hover:from-black/20 hover:to-black/70 transition from-black/10 to-black/40 rounded-md overflow-hidden flex flex-row items-center"
             >
-              <img
-                className="h-full scale-140 object-cover translate-x-2"
-                src={artifact.icon
-                  .replace(
+              <div className="h-full max-h-full aspect-square shrink-0  relative mx-4">
+                <img
+                  className="absolute inset-0 h-full object-cover scale-125 "
+                  src={artifact.icon.replace(
                     "https://homdgcat.wiki/homdgcat-res/Relic/",
                     "https://gi.yatta.moe/assets/UI/reliquary/",
-                  )
-                  .concat("?vh=2024123000")}
-                alt={artifact.name}
-              />
-              <div className="w-full h-full grid grid-rows-2 grid-cols-2  gap-2"></div>
+                  )}
+                  alt={artifact.name}
+                />
+              </div>
+
+              <div className=" px-2 w-full h-full grid grid-cols-2 grid-rows-2 gap-x-2 py-1.5">
+                {artifact.subStats.map((stat, i) => (
+                  <div
+                    className="w-full h-full flex flex-row gap-0 items-center text-white border-b border-white"
+                    key={i}
+                  >
+                    <div className="h-full aspect-square relative">
+                      <img
+                        className="absolute inset-0 p-1"
+                        src={`/images/icons/stats/${formatFightPropToName(stat.fightProp)}.png`}
+                      />
+                    </div>
+                    <p>+ {formatStatValue(stat.value, stat.isPercent)}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
