@@ -43,7 +43,8 @@ export default async function UIDPage({ params }: PageProps) {
   console.log(user.characters[11].skillLevels);
 
   const characters = user.characters.map((char) => {
-    const charName = char.costume.icon.name.replace("UI_AvatarIcon_", "");
+    const charName =
+      char.costume.icon.name?.replace("UI_AvatarIcon_", "") ?? "";
 
     return {
       id: Number(char.characterData.id),
@@ -56,7 +57,7 @@ export default async function UIDPage({ params }: PageProps) {
       friendship: Number(char.friendship ?? 0),
       constellation: Number(char.unlockedConstellations?.length ?? 0),
 
-      splashArt: char.costume.splashImage.url,
+      splashArt: String(char.costume?.splashImage?.url ?? ""),
 
       characterStats: {
         health: {
@@ -124,13 +125,11 @@ export default async function UIDPage({ params }: PageProps) {
             refinement: Number(char.weapon.refinementRank ?? 1),
             rarity: Number(char.weapon.weaponData?.stars ?? 0),
             icon: String(char.weapon.weaponData?.icon?.url ?? ""),
-            weaponStats: Object.entries(char.weapon.weaponStats ?? {}).map(
-              ([i]) => ({
-                fightProp: char.weapon.weaponStats?.[i]?.fightProp,
-                isPercent: char.weapon.weaponStats?.[i]?.isPercent,
-                value: char.weapon.weaponStats?.[i]?.value,
-              }),
-            ),
+            weaponStats: (char.weapon.weaponStats ?? []).map((stat) => ({
+              fightProp: String(stat.fightProp),
+              isPercent: Boolean(stat.isPercent),
+              value: Number(stat.value),
+            })),
           }
         : null,
 
@@ -163,7 +162,7 @@ export default async function UIDPage({ params }: PageProps) {
           playerWorldLevel={user.worldLevel || 0}
         />
 
-        <CharactersOverview characters={characters} />
+        <CharactersOverview characters={characters || []} />
 
         <CharacterStats
           achievements={user.achievements || 0}
