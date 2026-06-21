@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
   const res = await fetch(`https://enka.network/api/uid/${uid}/`, {
     headers: { "User-Agent": "genshin-builder" },
-    next: { revalidate: 60 },
+    cache: "no-store",
   });
 
   const data = await res.json();
