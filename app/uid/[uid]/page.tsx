@@ -1,7 +1,12 @@
 import CharactersOverview from "@/components/CharactersOverview";
 import CharacterStats from "@/components/CharacterStats";
 import ProfileBanner from "@/components/ProfileBanner";
-import { EnkaClient, fightProps } from "enka-network-api";
+import {
+  Constellation,
+  EnkaClient,
+  fightProps,
+  SkillLevel,
+} from "enka-network-api";
 import path from "path";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +40,8 @@ export default async function UIDPage({ params }: PageProps) {
       </main>
     );
   }
+
+  console.log(user.characters[11].skillLevels);
 
   const characters = user.characters.map((char) => {
     const charName = char.costume.icon.name.replace("UI_AvatarIcon_", "");
@@ -103,7 +110,7 @@ export default async function UIDPage({ params }: PageProps) {
           isPercent: Boolean(artifact.mainstat.isPercent ?? false),
         },
 
-        subStats: (artifact.substats.total ?? []).map((stat) => ({ 
+        subStats: (artifact.substats.total ?? []).map((stat) => ({
           fightProp: String(stat.fightProp ?? ""),
           value: Number(stat.value ?? 0),
           isPercent: Boolean(stat.isPercent ?? false),
@@ -127,6 +134,20 @@ export default async function UIDPage({ params }: PageProps) {
             ),
           }
         : null,
+
+      talents: (char.skillLevels ?? []).map((talent) => ({
+        skillLevel: Number(talent.level.base + talent.level.extra),
+        bonusLevel: Number(talent.level.extra),
+        icon: String(
+          `https://gi.yatta.moe/assets/UI/${talent.skill.icon.name}.png`,
+        ),
+      })),
+
+      constellations: (char.characterData.constellations ?? []).map(
+        (constellation) => ({
+          icon: String(constellation.icon.url),
+        }),
+      ),
     };
   });
 

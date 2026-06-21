@@ -88,6 +88,16 @@ export interface CharacterData {
       isPercent: boolean;
     }[];
   }[];
+
+  talents: {
+    skillLevel: number;
+    bonusLevel: number;
+    icon: string;
+  }[];
+
+  constellations: {
+    icon: string;
+  }[];
 }
 
 export interface CharacterOverviewProps {

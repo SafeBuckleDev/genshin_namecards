@@ -58,7 +58,10 @@ export const formatFightPropToName = (fightProp: string) => {
     return "HP percent";
   }
 
-  if (fightProp == "FIGHT_PROP_CUR_DEFENSE" || fightProp == "FIGHT_PROP_DEFENSE") {
+  if (
+    fightProp == "FIGHT_PROP_CUR_DEFENSE" ||
+    fightProp == "FIGHT_PROP_DEFENSE"
+  ) {
     // flat defense or max defense
 
     return "DEF";
@@ -67,7 +70,7 @@ export const formatFightPropToName = (fightProp: string) => {
   if (fightProp == "FIGHT_PROP_DEFENSE_PERCENT") {
     // Defense%
 
-    return "DEF percent"
+    return "DEF percent";
   }
 
   if (fightProp == "FIGHT_PROP_CRITICAL") {
@@ -170,6 +173,84 @@ export default function CharacterModal({
               "linear-gradient(to right, transparent 0%, black 20%, black 100%)",
           }}
         />
+
+        <div className="col-start-1 w-full h-full z-20 flex flex-col gap-12">
+          {/* Character base info */}
+          <div className="flex flex-col gap-1 text-white">
+            <h1 className="text-2xl">{character.fullName}</h1>
+            <div className="flex flex-row gap-2 text-xl">
+              <p>Lv.</p>
+              <p>{character.level}</p>
+              <p>/</p>
+              <p className="text-white/75">90</p>
+            </div>
+            <div className="flex flex-row gap-2 items-center text-xl">
+              <img className="h-7" src={"/images/icons/icon_friendship.png"} />
+              <p>{character.friendship}</p>
+            </div>
+          </div>
+
+          {/* Character level/constelations */}
+          <div className="w-full h-full flex flex-row justify-between pb-12 text-white">
+            <div className="w-8  h-full flex flex-col justify-end gap-3">
+              {character.constellations.map((constelation, i) => (
+                <div
+                  key={i}
+                  className="bg-black/40 border-white/70 border w-full aspect-square rounded-full relative overflow-hidden"
+                >
+                  <img src={constelation.icon} />
+
+                  {character.constellation <= i && (
+                    <div className="absolute inset-0 bg-black/60">
+                      <img
+                        src={"/images/icons/icon_lock.png"}
+                        className="w-full h-full p-2"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="w-9.5  h-full flex flex-col justify-end gap-6">
+              {character.talents.map((talent, i) => (
+                <div
+                  key={i}
+                  className="bg-black/40 border-white/70 border w-full aspect-square rounded-full relative"
+                >
+                  <img className="absolute top-0" src={talent.icon} />
+
+                  <div
+                    className={`px-1.25 rounded-full text-xs text-center ${
+                      talent.bonusLevel != 0 ? "bg-blue-500/80" : "bg-black/60"
+                    } absolute bottom-0 translate-y-4.25 left-1/2 -translate-x-1/2 flex flex-row gap-0.5 items-center justify-center`}
+                  >
+                    <p
+                      className={
+                        (talent.skillLevel === 10 && talent.bonusLevel === 0) ||
+                        talent.skillLevel === 13
+                          ? "text-yellow-400"
+                          : ""
+                      }
+                    >
+                      {talent.skillLevel}
+                    </p>
+
+                    {((talent.skillLevel === 10 && talent.bonusLevel === 0) ||
+                      talent.skillLevel === 13) && (
+                      <div className="w-4.5">
+                        <img
+                          className="w-full aspect-square"
+                          src={"/images/icons/icon_crown.webp"}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
         <div className="col-start-2 w-full h-full z-20 flex flex-col gap-18 ">
           {/* CharacterWeapon */}
