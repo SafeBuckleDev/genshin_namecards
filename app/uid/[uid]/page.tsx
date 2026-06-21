@@ -19,7 +19,6 @@ type PageProps = {
 // Create ONE global Enka client (important)
 const enka = new EnkaClient({
   cacheDirectory: path.join(process.cwd(), "enka-cache"),
-  timeout: 15000,
   defaultLanguage: "en",
 });
 
