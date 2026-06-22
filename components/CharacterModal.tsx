@@ -123,7 +123,7 @@ export default function CharacterModal({
       transition={{ duration: 0.2 }}
     >
       <motion.div
-        className="relative w-full lg:max-w-6xl grid grid-cols-3 gap-8 aspect-[16/7] overflow-hidden rounded-lg bg-[#e9e5dc] p-6"
+        className="hidden md:grid md:relative w-full lg:max-w-6xl grid-cols-3 gap-8 aspect-[16/7] overflow-hidden rounded-lg bg-[#e9e5dc] p-6"
         onClick={(e) => e.stopPropagation()}
         initial={{ opacity: 0, scale: 0.85, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -394,6 +394,45 @@ export default function CharacterModal({
             mouseY={mousePosition.y}
           />
         )}
+      </motion.div>
+
+      <motion.div
+        className="relative md:grid md:hidden w-full lg:max-w-6xl grid-cols-3 gap-8 overflow-hidden rounded-lg p-4 relative"
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, scale: 0.85, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 16 }}
+        transition={{
+          duration: 0.22,
+          ease: "easeOut",
+        }}
+      >
+        <img
+          className="absolute inset-0 object-cover w-full h-full z-0"
+          src={`https://gi.yatta.moe/assets/UI/namecard/UI_NameCardPic_${character.charName}_P.png?vh=2024123000`}
+        />
+        <div className="absolute inset-0 bg-black/20 w-full h-full" />
+
+        <div className="w-full flex flex-col gap-2">
+          {characterStatKeys.map((key) => {
+            const stat = character.characterStats[key];
+            return (
+              <div
+                key={key}
+                className="w-full flex flex-row justify-between transition text-white border-white hover:bg-black/40 pl-1 pr-2 py-1 rounded-sm border-b z-10"
+              >
+                <div className="flex flex-row gap-2">
+                  <img
+                    className="w-6 aspect-square"
+                    src={`/images/icons/stats/${formatFightPropToName(stat.fightProp)}.png`}
+                  />
+                  <p>{formatFightPropToName(stat.fightProp)}</p>
+                </div>
+                <p>{formatStatValue(stat.value, stat.isPercent)}</p>
+              </div>
+            );
+          })}
+        </div>
       </motion.div>
     </motion.div>
   );
