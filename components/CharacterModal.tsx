@@ -415,7 +415,7 @@ export default function CharacterModal({
 
         <div className="w-full flex flex-col gap-2">
           <div className="flex flex-row gap-4 h-28 mb-4">
-            <div className="h-full rounded-full overflow-hidden shrink-0 z-10">
+            <div className="h-full rounded-full aspect-square overflow-hidden shrink-0 z-10">
               <img
                 className="w-full h-full object-contain"
                 src={`https://gi.yatta.moe/assets/UI/UI_AvatarIcon_${character.charName}.png?vh=2024123000`}
@@ -445,17 +445,8 @@ export default function CharacterModal({
                       }
                     >
                       {talent.skillLevel}
-                    </p>
-
-                    {((talent.skillLevel === 10 && talent.bonusLevel === 0) ||
-                      talent.skillLevel === 13) && (
-                      <div className="w-4.5">
-                        <img
-                          className="w-full aspect-square"
-                          src={"/images/icons/icon_crown.webp"}
-                        />
-                      </div>
-                    )}</div>)}
+                  </p>
+                </div>)}
               </div>
             </div>
           </div>
