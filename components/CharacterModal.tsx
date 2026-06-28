@@ -414,7 +414,7 @@ export default function CharacterModal({
         <div className="absolute inset-0 bg-black/20 w-full h-full" />
 
         <div className="w-full flex flex-col gap-2">
-          <div className="flex flex-row gap-4 h-24 mb-4">
+          <div className="flex flex-row gap-4 h-28 mb-4">
             <div className="h-full rounded-full overflow-hidden shrink-0 z-10">
               <img
                 className="w-full h-full object-contain"
@@ -423,14 +423,39 @@ export default function CharacterModal({
               />
             </div>
 
-            <div className="z-10 w-full text-white flex flex-col gap-2">
-              <div className="w-full flex flex-row items-baseline justify-between">
-                <h1 className="text-2xl">{character.charName}</h1>
+            <div className="z-10 w-full text-white flex flex-col justify-between h-full ">
+              <div className="flex flex-col">
+                <div className="flex flex-row gap-2 items-center">
+                  <h1 className="text-2xl">{character.charName}</h1>
+
+                  <span className="bg-black/60 px-2 rounded-full">C{character.constellation}</span>
+                </div>
                 <p>Lv. {character.level} / 90</p>
+                <p>Friendship Lv. {character.friendship}</p>
               </div>
-              <div className="w-full flex flex-row items-baseline justify-between">
-                <h1>{character.charName}</h1>
-                <p>Lv. {character.level} / 90</p>
+              <div className="flex flex-row gap-2">
+                {character.talents.map((talent, i) => <div className="pl-2 pr-3 bg-black/60 rounded-full flex flex-row gap-1 items-center" key={i}>
+                <img className="h-7" src={talent.icon} />
+                  <p
+                      className={
+                        (talent.skillLevel === 10 && talent.bonusLevel === 0) ||
+                        talent.skillLevel === 13
+                          ? "text-yellow-400"
+                          : ""
+                      }
+                    >
+                      {talent.skillLevel}
+                    </p>
+
+                    {((talent.skillLevel === 10 && talent.bonusLevel === 0) ||
+                      talent.skillLevel === 13) && (
+                      <div className="w-4.5">
+                        <img
+                          className="w-full aspect-square"
+                          src={"/images/icons/icon_crown.webp"}
+                        />
+                      </div>
+                    )}</div>)}
               </div>
             </div>
           </div>
