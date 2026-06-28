@@ -414,6 +414,26 @@ export default function CharacterModal({
         <div className="absolute inset-0 bg-black/20 w-full h-full" />
 
         <div className="w-full flex flex-col gap-2">
+          <div className="flex flex-row gap-4 h-24 mb-4">
+            <div className="h-full rounded-full overflow-hidden shrink-0 z-10">
+              <img
+                className="w-full h-full object-contain"
+                src={`https://gi.yatta.moe/assets/UI/UI_AvatarIcon_${character.charName}.png?vh=2024123000`}
+                alt={character.fullName}
+              />
+            </div>
+
+            <div className="z-10 w-full text-white flex flex-col gap-2">
+              <div className="w-full flex flex-row items-baseline justify-between">
+                <h1 className="text-2xl">{character.charName}</h1>
+                <p>Lv. {character.level} / 90</p>
+              </div>
+              <div className="w-full flex flex-row items-baseline justify-between">
+                <h1>{character.charName}</h1>
+                <p>Lv. {character.level} / 90</p>
+              </div>
+            </div>
+          </div>
           {characterStatKeys.map((key) => {
             const stat = character.characterStats[key];
             return (
